@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <record id="view_property_order_tree" model="ir.ui.view">
             <field name="name">property.order.tree</field>
             <field name="model">property.order</field>
-            <field name="type">tree</field>
-            <field name="arch" type="xml">
+            <field name="type">tree</field> <field name="arch" type="xml">
                 <tree string="Work Orders" decoration-info="status == '10'" decoration-warning="status == '55'" decoration-success="status == '60'">
                     <field name="reference"/>
                     <field name="name"/>
@@ -26,7 +24,7 @@
                 <form string="Work Order">
                     <header>
                         <field name="status" widget="statusbar" statusbar_visible="10,55,60" clickable="True"/>
-                        </header>
+                    </header>
                     <sheet>
                         <div class="oe_title">
                             <h1>
@@ -37,20 +35,18 @@
                             <group>
                                 <field name="name"/>
                                 <field name="estate_id" options="{'no_create_edit': True}"/>
+                                <field name="oev_amount"/>
                             </group>
                             <group>
                                 <field name="issue_date"/>
                                 <field name="contractor_id" options="{'no_create_edit': True}"/>
-                            </group>
+                                </group>
                         </group>
                         <notebook>
-                            <page string="Details" name="order_details">
-                                <group>
-                                    <field name="status"/> </group>
-                                <separator string="Remarks"/>
+                            <page string="Remarks" name="order_remarks">
                                 <field name="remarks" placeholder="Add any remarks here..."/>
                             </page>
-                            </notebook>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids"/>
@@ -61,7 +57,7 @@
             </field>
         </record>
 
-        <record id="view_property_order_kanban" model="ir.ui.view">
+       <record id="view_property_order_kanban" model="ir.ui.view">
             <field name="name">property.order.kanban</field>
             <field name="model">property.order</field>
             <field name="type">kanban</field>
@@ -74,9 +70,9 @@
                     <field name="reference"/>
                     <field name="issue_date"/>
                     <field name="estate_id"/>
-                    <field name="contractor_id"/> <templates>
-                        <t t-name="kanban-box">
-                            <div t-attf-class="oe_kanban_global_click oe_kanban_card">
+                    <field name="contractor_id"/>
+                    <field name="color"/> <templates>
+                        <t t-name="kanban-box"> <div t-attf-class="oe_kanban_global_click oe_kanban_card oe_kanban_color_#{record.color.raw_value}">
                                 <div class="oe_kanban_content">
                                     <div class="mb-1">
                                         <strong><field name="name"/></strong>
@@ -130,16 +126,18 @@
         <record id="action_property_order" model="ir.actions.act_window">
             <field name="name">Property Orders</field>
             <field name="res_model">property.order</field>
-            <field name="view_mode">kanban,tree,form</field> <field name="search_view_id" ref="view_property_order_search"/>
-            <field name="context">{'search_default_group_by_status': 1}</field> <field name="view_ids" eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_property_order_kanban')}),
-                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_property_order_tree')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('view_property_order_form')})]"/>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="search_view_id" ref="view_property_order_search"/>
+            <field name="context">{'search_default_group_by_status': 1}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('property_order_management.view_property_order_kanban')}),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('property_order_management.view_property_order_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('property_order_management.view_property_order_form')})]"/>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     No work orders found. Let's create one!
                 </p><p>
-                    Manage all your property work orders here. You can track their status, assign contractors, and manage related details.
+                    Manage all your property work orders here.
                 </p>
             </field>
         </record>

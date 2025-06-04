@@ -5,9 +5,11 @@
             <field name="name">property.estate.tree</field>
             <field name="model">property.estate</field>
             <field name="arch" type="xml">
-                <tree string="Estates"> <field name="name"/>
+                <tree string="Estates" editable="bottom">
+                    <field name="name"/>
                     <field name="rom_code"/>
                     <field name="dmo_code"/>
+                    <field name="order_count" string="Orders"/>
                     <field name="active" widget="boolean_toggle"/>
                 </tree>
             </field>
@@ -19,6 +21,14 @@
             <field name="arch" type="xml">
                 <form string="Estate">
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(property_order_management.action_property_order)d" 
+                                    type="action"
+                                    class="oe_stat_button"
+                                    icon="fa-pencil-square-o" context="{'search_default_estate_id': active_id, 'default_estate_id': active_id}">
+                                <field name="order_count" widget="statinfo" string="Work Orders"/>
+                            </button>
+                        </div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1><field name="name" placeholder="e.g. Happy Valley Estate"/></h1>
@@ -26,14 +36,25 @@
                         <group>
                             <group>
                                 <field name="rom_code"/>
+                                <field name="address" placeholder="Estate Address..."/>
                             </group>
                             <group>
                                 <field name="dmo_code"/>
+                                <field name="active"/>
                             </group>
                         </group>
-                        <group>
-                            <field name="active"/>
-                        </group>
+                        <notebook>
+                            <page string="Work Orders" name="estate_work_orders">
+                                <field name="order_ids" readonly="1">
+                                    <tree>
+                                        <field name="reference"/>
+                                        <field name="name"/>
+                                        <field name="issue_date"/>
+                                        <field name="status" widget="badge"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
@@ -60,12 +81,11 @@
         <record id="action_property_estate" model="ir.actions.act_window">
             <field name="name">Estates</field>
             <field name="res_model">property.estate</field>
-            <field name="view_mode">tree,form</field> <field name="search_view_id" ref="view_property_estate_search"/>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_property_estate_search"/>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Create a new estate.
-                </p><p>
-                    Manage all your property estates here.
+                    No estates found. Create a new one.
                 </p>
             </field>
         </record>

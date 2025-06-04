@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_property_order_tree" model="ir.ui.view">
+            <field name="name">property.order.tree</field>
+            <field name="model">property.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Work Orders" decoration-info="status == '10'" decoration-warning="status == '55'" decoration-success="status == '60'">
+                    <field name="reference"/>
+                    <field name="name"/>
+                    <field name="estate_id"/>
+                    <field name="contractor_id"/>
+                    <field name="issue_date"/>
+                    <field name="status" widget="badge"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_property_order_form" model="ir.ui.view">
+            <field name="name">property.order.form</field>
+            <field name="model">property.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Work Order">
+                    <header>
+                        <field name="status" widget="statusbar" statusbar_visible="10,55,60" clickable="True"/>
+                        </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="reference" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="estate_id" options="{'no_create_edit': True}"/>
+                            </group>
+                            <group>
+                                <field name="issue_date"/>
+                                <field name="contractor_id" options="{'no_create_edit': True}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Details" name="order_details">
+                                <group>
+                                    <field name="status"/> </group>
+                                <separator string="Remarks"/>
+                                <field name="remarks" placeholder="Add any remarks here..."/>
+                            </page>
+                            </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_property_order_kanban" model="ir.ui.view">
+            <field name="name">property.order.kanban</field>
+            <field name="model">property.order</field>
+            <field name="type">kanban</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="status" class="o_kanban_small_column"
+                        group_create="false" group_edit="false" group_delete="false"
+                        quick_create="false">
+                    <field name="status"/>
+                    <field name="name"/>
+                    <field name="reference"/>
+                    <field name="issue_date"/>
+                    <field name="estate_id"/>
+                    <field name="contractor_id"/> <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click oe_kanban_card">
+                                <div class="oe_kanban_content">
+                                    <div class="mb-1">
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                    <div class="text-muted">
+                                        <small>Ref: <field name="reference"/></small>
+                                    </div>
+                                    <div class="text-muted">
+                                        <small>Date: <field name="issue_date" widget="date"/></small>
+                                    </div>
+                                    <div t-if="record.estate_id.raw_value" class="text-muted">
+                                        <small>Estate: <field name="estate_id" options="{'no_open': True}"/></small>
+                                    </div>
+                                    <div t-if="record.contractor_id.raw_value" class="text-muted">
+                                        <small>Contractor: <field name="contractor_id" options="{'no_open': True}"/></small>
+                                    </div>
+                                </div>
+                                </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="view_property_order_search" model="ir.ui.view">
+            <field name="name">property.order.search</field>
+            <field name="model">property.order</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Work Orders">
+                    <field name="name" string="Description"/>
+                    <field name="reference"/>
+                    <field name="estate_id"/>
+                    <field name="contractor_id"/>
+                    <field name="status"/>
+                    <field name="issue_date"/>
+                    <separator/>
+                    <filter string="Status: Submit" name="status_submit" domain="[('status', '=', '10')]"/>
+                    <filter string="Status: In Progress" name="status_in_progress" domain="[('status', '=', '55')]"/>
+                    <filter string="Status: Completion" name="status_completion" domain="[('status', '=', '60')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="group_by_status" context="{'group_by':'status'}"/>
+                        <filter string="Estate" name="group_by_estate" context="{'group_by':'estate_id'}"/>
+                        <filter string="Contractor" name="group_by_contractor" context="{'group_by':'contractor_id'}"/>
+                        <filter string="Issue Date (Month)" name="group_by_issue_date_month" context="{'group_by':'issue_date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_property_order" model="ir.actions.act_window">
+            <field name="name">Property Orders</field>
+            <field name="res_model">property.order</field>
+            <field name="view_mode">kanban,tree,form</field> <field name="search_view_id" ref="view_property_order_search"/>
+            <field name="context">{'search_default_group_by_status': 1}</field> <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_property_order_kanban')}),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_property_order_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_property_order_form')})]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No work orders found. Let's create one!
+                </p><p>
+                    Manage all your property work orders here. You can track their status, assign contractors, and manage related details.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_property_estate_tree" model="ir.ui.view">
+            <field name="name">property.estate.tree</field>
+            <field name="model">property.estate</field>
+            <field name="arch" type="xml">
+                <tree string="Estates"> <field name="name"/>
+                    <field name="rom_code"/>
+                    <field name="dmo_code"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_property_estate_form" model="ir.ui.view">
+            <field name="name">property.estate.form</field>
+            <field name="model">property.estate</field>
+            <field name="arch" type="xml">
+                <form string="Estate">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" placeholder="e.g. Happy Valley Estate"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="rom_code"/>
+                            </group>
+                            <group>
+                                <field name="dmo_code"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_property_estate_search" model="ir.ui.view">
+            <field name="name">property.estate.search</field>
+            <field name="model">property.estate</field>
+            <field name="arch" type="xml">
+                <search string="Search Estates">
+                    <field name="name" string="Estate Name"/>
+                    <field name="rom_code"/>
+                    <field name="dmo_code"/>
+                    <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                    <filter string="Archived" name="filter_archived" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="ROM Code" name="group_by_rom_code" context="{'group_by':'rom_code'}"/>
+                        <filter string="DMO Code" name="group_by_dmo_code" context="{'group_by':'dmo_code'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_property_estate" model="ir.actions.act_window">
+            <field name="name">Estates</field>
+            <field name="res_model">property.estate</field>
+            <field name="view_mode">tree,form</field> <field name="search_view_id" ref="view_property_estate_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new estate.
+                </p><p>
+                    Manage all your property estates here.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

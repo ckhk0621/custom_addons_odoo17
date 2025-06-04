@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+            id="menu_property_management_root"
+            name="Property Management"
+            web_icon="property_order_management,static/description/icon.png"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_property_order_master"
+            name="Work Orders"
+            parent="menu_property_management_root"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_action_property_order_list"
+            name="All Orders"
+            parent="menu_property_order_master"
+            action="property_order_management.action_property_order"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_property_config_root"
+            name="Configuration"
+            parent="menu_property_management_root"
+            sequence="100"/>
+
+        <menuitem
+            id="menu_action_property_estate_list"
+            name="Estates"
+            parent="menu_property_config_root"
+            action="property_order_management.action_property_estate"
+            sequence="10"/>
+
+        </data>
+</odoo>

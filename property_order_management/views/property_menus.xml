@@ -40,11 +40,5 @@
             action="property_order_management.action_property_block"
             sequence="20"/>
 
-        <menuitem
-            id="menu_property_contractor_master"
-            name="Contractors"
-            parent="menu_property_config_root"
-            action="property_order_management.action_property_contractor" sequence="20"/>
-        
     </data>
 </odoo>

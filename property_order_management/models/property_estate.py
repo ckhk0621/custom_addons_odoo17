@@ -7,12 +7,13 @@ _logger = logging.getLogger(__name__)
 class PropertyEstate(models.Model):
     _name = 'property.estate'
     _description = 'Property Estate Information'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'name asc'
 
-    name = fields.Char(string='Estate Name', required=True, index=True)
-    rom_code = fields.Char(string='ROM Code') # 來自 "E-Housing PSAU version 2.xlsx - Estate Management.csv"
-    dmo_code = fields.Char(string='DMO Code') # 來自 "E-Housing PSAU version 2.xlsx - Estate Management.csv"
-    address = fields.Text(string='Address')
+    name = fields.Char(string='Estate Name', required=True, index=True, tracking=True)
+    rom_code = fields.Char(string='ROM Code', tracking=True) # 來自 "E-Housing PSAU version 2.xlsx - Estate Management.csv"
+    dmo_code = fields.Char(string='DMO Code', tracking=True) # 來自 "E-Housing PSAU version 2.xlsx - Estate Management.csv"
+    address = fields.Text(string='Address', tracking=True)
 
     # 關聯到座數/樓宇模型
     block_ids = fields.One2many('property.block', 'estate_id', string='Blocks/Buildings')

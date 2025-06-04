@@ -5,7 +5,7 @@
             <field name="name">property.estate.tree</field>
             <field name="model">property.estate</field>
             <field name="arch" type="xml">
-                <tree string="Estates" editable="bottom">
+                <tree string="Estates">
                     <field name="name"/>
                     <field name="rom_code"/>
                     <field name="dmo_code"/>
@@ -74,6 +74,10 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="message_ids"/>
+                    </div>
                 </form>
             </field>
         </record>

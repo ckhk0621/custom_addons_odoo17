@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_partner_form_inherited_is_contractor" model="ir.ui.view">
+            <field name="name">res.partner.form.is.contractor</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='category_id']" position="after">
+                    <field name="is_contractor"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_property_contractor_list" model="ir.actions.act_window">
+            <field name="name">Contractors</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('is_contractor', '=', True)]</field>
+            <field name="context">{'default_is_contractor': True, 'default_is_company': True}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No contractors found. Create a new one!
+                </p>
+                <p>
+                    Manage your list of contractors and service providers here.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

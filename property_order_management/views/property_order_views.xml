@@ -4,13 +4,19 @@
         <record id="view_property_order_tree" model="ir.ui.view">
             <field name="name">property.order.tree</field>
             <field name="model">property.order</field>
-            <field name="type">tree</field> <field name="arch" type="xml">
-                <tree string="Work Orders" decoration-info="status == '10'" decoration-warning="status == '55'" decoration-success="status == '60'">
+            <field name="arch" type="xml">
+                <tree string="Work Orders" 
+                      decoration-muted="status in ('35', '86')" 
+                      decoration-success="status == '85'" 
+                      decoration-info="status in ('05','10', '45', '75', '78')" 
+                      decoration-warning="status in ('30', '50', '55', '60')">
                     <field name="reference"/>
                     <field name="name"/>
                     <field name="estate_id"/>
                     <field name="contractor_id"/>
                     <field name="issue_date"/>
+                    <field name="initiator"/>
+                    <field name="oev_amount" sum="Total OEV"/>
                     <field name="status" widget="badge"/>
                 </tree>
             </field>
@@ -19,37 +25,57 @@
         <record id="view_property_order_form" model="ir.ui.view">
             <field name="name">property.order.form</field>
             <field name="model">property.order</field>
-            <field name="type">form</field> <field name="arch" type="xml">
+            <field name="type">form</field>
+            <field name="arch" type="xml">
                 <form string="Work Order">
                     <header>
-                        <button name="action_submit" string="Submit" type="object" class="oe_highlight" invisible="status == '10'"/>
-                        <button name="action_in_progress" string="Start Progress" type="object" class="oe_highlight" invisible="status == '55'"/>
-                        <button name="action_complete" string="Mark as Complete" type="object" class="oe_highlight" invisible="status == '60'"/>
-                        <field name="status" widget="statusbar" statusbar_visible="10,55,60"/>
+                        <button name="action_submit" type="object" string="Submit (10)"
+                                class="oe_highlight" invisible="status != '05'"/>
+                        <button name="action_so_support" type="object" string="SO Support (30)"
+                                class="oe_highlight" invisible="status != '10'"/>
+                        <button name="action_issue_work_order" type="object" string="Issue WO (45)"
+                                class="oe_highlight" invisible="status not in ['10','30']"/>
+                        <button name="action_ao_reject" type="object" string="AO Reject (35)"
+                                class="oe_highlight oe_highlight_danger" invisible="status not in ['10','30']"/>
+                        <button name="action_contractor_acknowledge" type="object" string="Cont. Ack (50)"
+                                class="oe_highlight" invisible="status != '45'"/>
+                        <button name="action_set_in_progress" type="object" string="In Progress (55)"
+                                class="oe_highlight" invisible="status != '50'"/>
+                        <button name="action_set_completion" type="object" string="Completion (60)"
+                                class="oe_highlight" invisible="status != '55'"/>
+                        <field name="status" widget="statusbar" 
+                               statusbar_visible="05,10,30,45,50,55,60,75,78,85,86"/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box" name="button_box">
-                            </div>
                         <div class="oe_title">
-                            <label for="name" string="Order Description" class="oe_edit_only"/>
-                            <h1><field name="name" placeholder="e.g., Repair leaking pipe in Block A, Room 101"/></h1>
-                            <h3><field name="reference" readonly="1"/></h3>
+                            <h1><field name="name" placeholder="Order Description..."/></h1>
+                            <h2><field name="reference" readonly="1"/></h2>
                         </div>
-                        <group name="main_details">
-                            <group name="left_column_details">
+                        <group>
+                            <group string="Basic Information">
                                 <field name="estate_id" options="{'no_create_edit': True}" context="{'show_address': 1}" can_create="false" can_write="false"/>
                                 <field name="contractor_id" widget="res_partner_many2one" context="{'show_address': 1, 'default_is_company': True}" options="{'no_create_edit': True}" can_create="false" can_write="false"/>
-                                </group>
-                            <group name="right_column_details">
                                 <field name="issue_date"/>
                                 <field name="oev_amount"/>
-                                </group>
+                            </group>
+                            <group string="Additional Details">
+                                <field name="work_type"/>
+                                <field name="project_no"/>
+                                <field name="budget_year"/>
+                                <field name="initiator" readonly="1" options="{'no_open': True}"/>
+                                <field name="contact_person"/>
+                                <field name="contact_tel_no"/>
+                            </group>
                         </group>
                         <notebook>
                             <page string="Remarks" name="order_remarks">
-                                <field name="remarks" placeholder="Add any specific details, observations, or internal notes about this work order..."/>
+                                <field name="remarks" placeholder="Add any specific details here..."/>
                             </page>
-                            </notebook>
+                            <page string="Variation Order (VO)" name="vo_project_page" invisible="status not in ['05', '10', '30', '35']">
+                                <p>Variation Order details will be managed here once the VO Project functionality is implemented.</p>
+                                <p>According to the function list, VO Project allows editing Amount and Description and requires Manager AC approval.</p>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids"/>
@@ -60,10 +86,9 @@
             </field>
         </record>
 
-       <record id="view_property_order_kanban" model="ir.ui.view">
+        <record id="view_property_order_kanban" model="ir.ui.view">
             <field name="name">property.order.kanban</field>
             <field name="model">property.order</field>
-            <field name="type">kanban</field>
             <field name="arch" type="xml">
                 <kanban default_group_by="status" class="o_kanban_small_column"
                         group_create="false" group_edit="false" group_delete="false"
@@ -74,36 +99,29 @@
                     <field name="issue_date"/>
                     <field name="estate_id"/>
                     <field name="contractor_id"/>
-                    <field name="color"/> <templates>
-                        <t t-name="kanban-box"> <div t-attf-class="oe_kanban_global_click oe_kanban_card oe_kanban_color_#{record.color.raw_value}">
+                    <field name="color"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click oe_kanban_card oe_kanban_color_#{record.color.raw_value}">
                                 <div class="oe_kanban_content">
                                     <div class="mb-1">
                                         <strong><field name="name"/></strong>
                                     </div>
-                                    <div class="text-muted">
-                                        <small>Ref: <field name="reference"/></small>
-                                    </div>
-                                    <div class="text-muted">
-                                        <small>Date: <field name="issue_date" widget="date"/></small>
-                                    </div>
-                                    <div t-if="record.estate_id.raw_value" class="text-muted">
-                                        <small>Estate: <field name="estate_id" options="{'no_open': True}"/></small>
-                                    </div>
-                                    <div t-if="record.contractor_id.raw_value" class="text-muted">
-                                        <small>Contractor: <field name="contractor_id" options="{'no_open': True}"/></small>
-                                    </div>
+                                    <div class="text-muted"><small>Ref: <field name="reference"/></small></div>
+                                    <div class="text-muted"><small>Estate: <field name="estate_id" options="{'no_open': True}"/></small></div>
+                                    <div class="text-muted"><small>Contractor: <field name="contractor_id" options="{'no_open': True}"/></small></div>
+                                    <div class="text-muted"><small>Issue Date: <field name="issue_date" widget="date"/></small></div>
                                 </div>
-                                </div>
+                            </div>
                         </t>
                     </templates>
                 </kanban>
             </field>
         </record>
-
+        
         <record id="view_property_order_search" model="ir.ui.view">
             <field name="name">property.order.search</field>
             <field name="model">property.order</field>
-            <field name="type">search</field>
             <field name="arch" type="xml">
                 <search string="Search Work Orders">
                     <field name="name" string="Description"/>
@@ -112,14 +130,17 @@
                     <field name="contractor_id"/>
                     <field name="status"/>
                     <field name="issue_date"/>
+                    <field name="work_type"/>
+                    <field name="project_no"/>
+                    <field name="budget_year"/>
                     <separator/>
-                    <filter string="Status: Submit" name="status_submit" domain="[('status', '=', '10')]"/>
-                    <filter string="Status: In Progress" name="status_in_progress" domain="[('status', '=', '55')]"/>
-                    <filter string="Status: Completion" name="status_completion" domain="[('status', '=', '60')]"/>
+                    <filter string="Create (05)" name="status_05" domain="[('status', '=', '05')]"/>
+                    <filter string="Submit (10)" name="status_10" domain="[('status', '=', '10')]"/>
                     <group expand="0" string="Group By">
                         <filter string="Status" name="group_by_status" context="{'group_by':'status'}"/>
                         <filter string="Estate" name="group_by_estate" context="{'group_by':'estate_id'}"/>
                         <filter string="Contractor" name="group_by_contractor" context="{'group_by':'contractor_id'}"/>
+                        <filter string="Initiator" name="group_by_initiator" context="{'group_by':'initiator'}"/>
                         <filter string="Issue Date (Month)" name="group_by_issue_date_month" context="{'group_by':'issue_date:month'}"/>
                     </group>
                 </search>
@@ -139,8 +160,6 @@
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     No work orders found. Let's create one!
-                </p><p>
-                    Manage all your property work orders here.
                 </p>
             </field>
         </record>

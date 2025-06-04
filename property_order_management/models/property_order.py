@@ -36,35 +36,52 @@ class PropertyOrder(models.Model):
         'res.partner', string='Contractor', tracking=True,
         domain="[('is_company', '=', True), ('is_contractor', '=', True)]"
     )
-    oev_amount = fields.Float(string='OEV ($)', tracking=True) #
+    oev_amount = fields.Float(string='OEV ($)', tracking=True)
     color = fields.Integer(string='Color Index')
 
-    # --- 新增欄位 ---
-    # 參考 "E-Housing PSAU version 2.xlsx - Order > Create.csv"
-    work_type = fields.Char(string='Work Type') # 假設為 Char，您可以根據實際情況改為 Selection
+    # --- Fields ---
+    work_type = fields.Char(string='Work Type')
     project_no = fields.Char(string='Project No.')
-    budget_year = fields.Char(string='Budget Year')
-    initiator = fields.Many2one('res.users', string='Initiator', default=lambda self: self.env.user, tracking=True) # 預設為當前使用者
+    budget_amount = fields.Float(string='Budget Amount ($)', tracking=True)
+    fiscal_year = fields.Char(string='Fiscal Year', size=4, tracking=True)
+    initiator = fields.Many2one('res.users', string='Initiator', default=lambda self: self.env.user, tracking=True)
     contact_person = fields.Char(string='Contact Person')
     contact_tel_no = fields.Char(string='Contact Tel. No.')
-    # target_completion_date = fields.Date(string='Target Completion Date') # 您可以根據需要添加
-    # basic_start_date = fields.Date(string='Basic Start Date') # 用於自動化狀態
-    # basic_fin_date = fields.Date(string='Basic Fin. Date') # 用於自動化狀態和逾期付款計算
+
+    @api.onchange('fiscal_year')
+    def _onchange_fiscal_year(self):
+        if self.fiscal_year:
+            # Remove any non-digit characters
+            year = ''.join(filter(str.isdigit, self.fiscal_year))
+            # Ensure it's exactly 4 digits
+            if len(year) > 4:
+                year = year[:4]
+            elif len(year) < 4:
+                year = year.zfill(4)
+            self.fiscal_year = year
 
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('reference', ('New')) == ('New'):
                 vals['reference'] = self.env['ir.sequence'].next_by_code('property.order.sequence') or ('New')
-            if not vals.get('status'): # 確保新訂單的初始狀態是 '05'
+            if not vals.get('status'):
                 vals['status'] = '05'
+            # Format fiscal_year on creation
+            if fiscal_year := vals.get('fiscal_year'):
+                year = ''.join(filter(str.isdigit, fiscal_year))
+                if len(year) > 4:
+                    year = year[:4]
+                elif len(year) < 4:
+                    year = year.zfill(4)
+                vals['fiscal_year'] = year
         return super(PropertyOrder, self).create(vals_list)
 
     @api.model
     def _read_group_status_ids(self, stages, domain, order):
         return [key for key, _ in self._fields['status'].selection]
 
-    # --- 狀態流轉按鈕方法 (根據需要擴展) ---
+    # --- Status transition methods ---
     def action_submit(self):
         self.write({'status': '10'})
 
@@ -74,7 +91,7 @@ class PropertyOrder(models.Model):
     def action_ao_reject(self):
         self.write({'status': '35'})
         
-    def action_issue_work_order(self): # 假設 HA AC 批准
+    def action_issue_work_order(self):
         self.write({'status': '45'})
 
     def action_contractor_acknowledge(self):
@@ -83,9 +100,7 @@ class PropertyOrder(models.Model):
     def action_set_in_progress(self):
         self.write({'status': '55'})
 
-    def action_set_completion(self): # 先到 60
+    def action_set_completion(self):
         self.write({'status': '60'})
-    
-    # ... 您可以為 75, 78, 85, 86 等狀態添加更多方法 ...
 
     _logger.info(">>>> Odoo 17: PropertyOrder model (with more fields and statuses) loaded by Python!")

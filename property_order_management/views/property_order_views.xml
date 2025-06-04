@@ -61,7 +61,8 @@
                             <group string="Additional Details">
                                 <field name="work_type"/>
                                 <field name="project_no"/>
-                                <field name="budget_year"/>
+                                <field name="budget_amount"/>
+                                <field name="fiscal_year"/>
                                 <field name="initiator" readonly="1" options="{'no_open': True}"/>
                                 <field name="contact_person"/>
                                 <field name="contact_tel_no"/>
@@ -132,7 +133,7 @@
                     <field name="issue_date"/>
                     <field name="work_type"/>
                     <field name="project_no"/>
-                    <field name="budget_year"/>
+                    <field name="fiscal_year"/>
                     <separator/>
                     <filter string="Create (05)" name="status_05" domain="[('status', '=', '05')]"/>
                     <filter string="Submit (10)" name="status_10" domain="[('status', '=', '10')]"/>

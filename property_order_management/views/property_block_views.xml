@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_property_block_tree" model="ir.ui.view">
+            <field name="name">property.block.tree</field>
+            <field name="model">property.block</field>
+            <field name="arch" type="xml">
+                <tree string="Blocks/Buildings" editable="bottom">
+                    <field name="name"/>
+                    <field name="estate_id" options="{'no_create': True}"/> <field name="active" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_property_block_form" model="ir.ui.view">
+            <field name="name">property.block.form</field>
+            <field name="model">property.block</field>
+            <field name="arch" type="xml">
+                <form string="Block/Building">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="estate_id" options="{'no_create_edit': True}"/>
+                            </group>
+                            <group>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_property_block" model="ir.actions.act_window">
+            <field name="name">Blocks/Buildings</field>
+            <field name="res_model">property.block</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new block or building.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

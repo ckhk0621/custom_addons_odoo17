@@ -22,10 +22,14 @@
                 <form string="Estate">
                     <sheet>
                         <div class="oe_button_box" name="button_box">
+                            <button name="action_view_blocks" type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-building"> <field name="block_count" widget="statinfo" string="Blocks"/>
+                            </button>
                             <button name="%(property_order_management.action_property_order)d" 
                                     type="action"
                                     class="oe_stat_button"
-                                    icon="fa-pencil-square-o" context="{'search_default_estate_id': active_id, 'default_estate_id': active_id}">
+                                    icon="fa-pencil-square-o">
                                 <field name="order_count" widget="statinfo" string="Work Orders"/>
                             </button>
                         </div>
@@ -44,6 +48,14 @@
                             </group>
                         </group>
                         <notebook>
+                            <page string="Blocks/Buildings" name="estate_blocks">
+                                <field name="block_ids" context="{'default_estate_id': active_id}">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="active" widget="boolean_toggle"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="Work Orders" name="estate_work_orders">
                                 <field name="order_ids" readonly="1">
                                     <tree>

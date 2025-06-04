@@ -21,11 +21,18 @@
             id="menu_property_config_root"
             name="Configuration"
             parent="menu_property_management_root"
-            sequence="100"/> <menuitem
+            sequence="100"/> 
+            <menuitem
             id="menu_action_property_estate_list"
             name="Estates"
             parent="menu_property_config_root"
             action="property_order_management.action_property_estate" sequence="10"/>
+
+        <menuitem
+            id="menu_property_contractor_master"
+            name="Contractors"
+            parent="menu_property_config_root"
+            action="property_order_management.action_property_contractor" sequence="20"/>
         
         </data>
 </odoo>

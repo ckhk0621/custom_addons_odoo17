@@ -39,11 +39,12 @@ class PropertyOrder(models.Model):
     estate_id = fields.Many2one('property.estate', string='Estate', required=True, tracking=True, ondelete='restrict', index=True)
     # 關聯到承辦商 (res.partner 模型)
     contractor_id = fields.Many2one(
-        'res.partner', string='Contractor', tracking=True,
-        domain="[('is_company', '=', True)]" # 通常承辦商是公司
-        # 之後您可以為 res.partner 添加 is_contractor 欄位並用 domain="[('is_contractor', '=', True)]"
+    'res.partner', string='Contractor', tracking=True,
+        domain="[('is_company', '=', True), ('is_contractor', '=', True)]" # <--- 修改這裡
+        # 或者如果您不強制承辦商必須是公司類型，可以簡化為：
+        # domain="[('is_contractor', '=', True)]"
     )
-    
+        
     # 來自 "Full function list v2.pdf" 或 "WhatsApp Business Function List.docx" 的 OEV $
     oev_amount = fields.Float(string='OEV ($)', tracking=True)
 

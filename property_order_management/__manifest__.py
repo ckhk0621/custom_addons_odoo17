@@ -18,6 +18,8 @@ This module allows managing property estates and related work orders.
     'data': [
         'security/ir.model.access.csv',
         'data/property_order_sequence.xml',
+        'views/res_partner_views.xml',
+        'views/property_contractor_views.xml',
         'views/property_estate_views.xml',
         'views/property_block_views.xml',
         'views/property_order_views.xml',

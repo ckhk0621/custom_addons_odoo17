@@ -5,7 +5,7 @@
             <field name="name">property.block.tree</field>
             <field name="model">property.block</field>
             <field name="arch" type="xml">
-                <tree string="Blocks/Buildings" editable="bottom">
+                <tree string="Blocks/Buildings" editable="bottom" create="1" delete="1">
                     <field name="name"/>
                     <field name="estate_id" options="{'no_create': True}"/>
                     <field name="building_type"/>

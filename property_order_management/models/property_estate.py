@@ -50,7 +50,7 @@ class PropertyEstate(models.Model):
     def action_view_blocks(self):
         self.ensure_one()
         return {
-            'name': ('Blocks/Buildings'),
+            'name': ('Blocks/Buildings of %s') % self.name,
             'type': 'ir.actions.act_window',
             'res_model': 'property.block',
             'view_mode': 'tree,form',
@@ -58,4 +58,4 @@ class PropertyEstate(models.Model):
             'context': {'default_estate_id': self.id}
         }
 
-    _logger.info(">>>> Odoo 17: PropertyEstate model (enhanced) loaded by Python!")
+    _logger.info(">>>> Odoo 17: PropertyEstate model (with block relation) loaded!")

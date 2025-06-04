@@ -9,6 +9,7 @@
                     <field name="name"/>
                     <field name="rom_code"/>
                     <field name="dmo_code"/>
+                    <field name="block_count" string="Blocks"/>
                     <field name="order_count" string="Orders"/>
                     <field name="active" widget="boolean_toggle"/>
                 </tree>
@@ -22,9 +23,11 @@
                 <form string="Estate">
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button name="action_view_blocks" type="object"
+                            <button name="action_view_blocks" 
+                                    type="object"
                                     class="oe_stat_button"
-                                    icon="fa-building"> <field name="block_count" widget="statinfo" string="Blocks"/>
+                                    icon="fa-building">
+                                <field name="block_count" widget="statinfo" string="Blocks/Buildings"/>
                             </button>
                             <button name="%(property_order_management.action_property_order)d" 
                                     type="action"
@@ -52,6 +55,9 @@
                                 <field name="block_ids" context="{'default_estate_id': active_id}">
                                     <tree editable="bottom">
                                         <field name="name"/>
+                                        <field name="building_type"/>
+                                        <field name="completion_year"/>
+                                        <field name="number_of_lifts"/>
                                         <field name="active" widget="boolean_toggle"/>
                                     </tree>
                                 </field>
